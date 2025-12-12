@@ -1,7 +1,10 @@
-import { Card, Stack, Typography } from "@mui/material";
+"use client"
+
+import { Card, CardActionArea, Stack, Typography } from "@mui/material";
 import type { Product } from "./interface/product-interface";
-import API_URL from "../common/constants/api";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+ 
+
 
 //product interfacesinde props tanımlıyoruz
 interface ProductProps {
@@ -9,8 +12,10 @@ interface ProductProps {
 } 
 
 export default function Product({product}:ProductProps){//bu interface tipinde ürünü getir diyoruz
+  const router=useRouter()
     return(
-        <Card className="p-4">
+        <CardActionArea onClick={()=>router.push(`/products/${product.id}`)}>
+ <Card className="p-4">
             <Stack gap={3}>
           <Typography variant="h4">{product.name}
             </Typography>
@@ -31,5 +36,7 @@ export default function Product({product}:ProductProps){//bu interface tipinde �
             </Stack>
   
         </Card>
+        </CardActionArea>
+       
     );
 }
