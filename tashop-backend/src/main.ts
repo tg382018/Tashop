@@ -1,8 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Logger } from 'nestjs-pino';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  const app = await NestFactory.create(AppModule, { cors: true });
+  app.useLogger(app.get(Logger))
+  app.useGlobalPipes(new ValidationPipe({whitelist:true})) // dtoda olmayan parametre de istek atılırsa otomatik siliyr
+    app.use(cookieParser())
+  await app.listen(app.get(ConfigService).getOrThrow('PORT'));
 }
 bootstrap();

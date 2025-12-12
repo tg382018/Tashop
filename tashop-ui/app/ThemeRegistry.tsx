@@ -1,31 +1,26 @@
-"use client"
+"use client";
 
-import * as React from "react";
-import { darkTheme } from "@/app/dark.theme";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
-import { Container, CssBaseline, ThemeProvider } from "@mui/material";
+import { ReactNode } from "react";
+import { Container, CssBaseline } from "@mui/material";
+import Header from "./header/header";
+import Providers from "./provider";
+import logout from "./auth/logout";
 
-export default function ThemeRegistry
-(
-    {
-        children,
-    }:
-    {
-        children:React.ReactNode;
-    }
-)
-{
-    return (
-              <AppRouterCacheProvider>
+type ThemeRegistryProps = {
+  children: ReactNode;
+  authenticated: boolean;
+};
 
-          <ThemeProvider theme={darkTheme}>
-            <CssBaseline/>
-            <Container>
-               {children}
-              </Container>
-          
-          </ThemeProvider>
-       
-        </AppRouterCacheProvider>
-    );
+export default function ThemeRegistry({
+  children,
+  authenticated,
+}: ThemeRegistryProps) {
+  return (
+    <Providers authenticated={authenticated}>
+      <CssBaseline /> 
+      <Header logout={logout} />
+      <Container className="mt-10">{children}</Container>
+    </Providers>
+  );
 }
+    
