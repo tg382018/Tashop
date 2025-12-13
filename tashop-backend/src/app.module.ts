@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CheckoutModule } from './checkout/checkout.module';
  
 @Module({
   // BİR SERVİCE NIN BAŞINDA INJECTABLE VARSA ONU NORMALDE KENDI MODULESUNDA EXPORT VE PROVIDE  ETMEK GEREKİRDAHA SONRA BAŞKA BİR YERDE CONSTTRUCTOR İLE KULLANILABİLİR
@@ -41,7 +42,7 @@ ServeStaticModule.forRoot({
 
 
 
-    ConfigModule.forRoot(),UsersModule, PrismaModule, AuthModule, ProductsModule],
+    ConfigModule.forRoot(),UsersModule, PrismaModule, AuthModule, ProductsModule, CheckoutModule],
   controllers: [],
   providers: [],
 })
