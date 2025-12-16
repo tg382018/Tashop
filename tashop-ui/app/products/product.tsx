@@ -3,6 +3,7 @@
 import { Card, CardActionArea, Stack, Typography } from "@mui/material";
 import type { Product } from "./interface/product-interface";
 import { useRouter } from "next/navigation";
+import Checkout from "../checkout/checkout";
  
 
 
@@ -33,6 +34,7 @@ export default function Product({product}:ProductProps){//bu interface tipinde Ã
 
                <Typography variant="h4">${product.price}
             </Typography>
+                
             </Stack>
   
         </Card>

@@ -4,24 +4,32 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { promises as fs } from "fs";
 import { join } from "path";
 import { PRODUCT_IMAGES } from './product-image';
+import { Prisma } from '@prisma/client';
+import { ProductsGateway } from './products-gateway';
 @Injectable()
 export class ProductsService {
-    constructor(private readonly prismaService:PrismaService){}
+    constructor(private readonly prismaService:PrismaService,private readonly productsGateway:ProductsGateway){}
 
     async createProduct(data:CreateProductRequest , userId:number)
     {
-            return this.prismaService.product.create({
+            const product=await this.prismaService.product.create({
                 data:{
                     ...data,
                     userId,
                     
                 }
-            })
+            });
+            this.productsGateway.handleProductUpdated();
+            return product;
     }
 
-    async getProducts()
+    async getProducts(status?:string)
     {
-        const products=await this.prismaService.product.findMany();
+        const args:Prisma.ProductFindManyArgs={};
+        if(status=='availible'){
+          args.where={sold:false};
+        }
+        const products=await this.prismaService.product.findMany(args);
         return Promise.all(products.map(async (product)=>({...product,imageExist:await this.imageExist(product.id)})),
     );       
     }
@@ -36,6 +44,15 @@ private async imageExist(productId: number) {
   } catch (err) {
     return false;
   }
+}
+
+
+async update(productId:number,data:Prisma.ProductUpdateInput){
+  await this.prismaService.product.update({
+    where:{id:productId},
+    data,
+  });
+  this.productsGateway.handleProductUpdated();
 }
 
 async getProduct(productId:number){

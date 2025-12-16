@@ -1,6 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import getProduct from "./get-product";
 import API_URL from "@/app/common/constants/api";
+import Checkout from "@/app/checkout/checkout";
  
 
 interface SingleProductProps{
@@ -27,6 +28,7 @@ export default async function SingleProduct({params}:SingleProductProps)
                  <Typography variant="h4">
                     ${product.price}
                 </Typography>
+                <Checkout productId={product.id}/>
         </Stack>
     )
 }

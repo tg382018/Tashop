@@ -16,10 +16,10 @@ export class AuthService {
 
     async login(user:User,response:Response ){
         const expires =new Date();
-      expires.setMilliseconds(
+        expires.setMilliseconds(
       expires.getMilliseconds() +
         ms(this.configService.getOrThrow<string>('JWT_EXPIRATION') as ms.StringValue)
-    );
+        );
 
         const tokenPayload :TokenPayload={userId:user.id};
         const token=this.jwtService.sign(tokenPayload);

@@ -14,10 +14,10 @@ export const getErrorMessage = (response: unknown) => {
     if (Array.isArray(message) && message.length > 0) {
       return formatErrorMessage(message[0]);
     }
-
+    
     if (typeof message === "string") {
       return formatErrorMessage(message);
-    }
+}
   }
 
   return "Unknown error received";

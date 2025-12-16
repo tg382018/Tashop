@@ -18,14 +18,15 @@ export const getCookieHeader = async (): Promise<Record<string, string>> => {
 const defaultHeaders = {
   "Content-Type": "application/json",
 };
-export const post = async (path: string, formData: FormData) => {
+export const post = async (path: string, data: FormData|object) => {
+  const body=data instanceof FormData ? Object.fromEntries(data):data;
   const res = await fetch(`${API_URL}/${path}`, {
     method: "POST",
     headers: {
       ...defaultHeaders,
       ...(await getCookieHeader()),
     },
-    body: JSON.stringify(Object.fromEntries(formData)),
+    body: JSON.stringify(body),
   });
   const parsedRes = await res.json();
   if (!res.ok) {
@@ -35,8 +36,16 @@ export const post = async (path: string, formData: FormData) => {
 };
 
 
-export const get = async <T>(path: string,tags?:string[]) => {
-  const res = await fetch(`${API_URL}/${path}`, {
+export const get = async <T>(
+  path: string,
+  tags?: string[],
+  params?: URLSearchParams
+) => {
+  const url = params
+    ? `${API_URL}/${path}?${params.toString()}`
+    : `${API_URL}/${path}`;
+
+  const res = await fetch(url, {
     headers: {
       ...(await getCookieHeader()),
     },

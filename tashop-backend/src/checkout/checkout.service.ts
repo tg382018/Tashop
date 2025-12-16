@@ -10,6 +10,9 @@ constructor (private readonly stripe:Stripe, private readonly productService:Pro
 async createSession(productId:number){
     const product=await this.productService.getProduct(productId);
     return this.stripe.checkout.sessions.create({
+        metadata:{
+            productId
+        },
         line_items:[
             {
                 price_data:{
@@ -29,4 +32,19 @@ async createSession(productId:number){
         cancel_url:this.configService.getOrThrow('STRIPE_CANCEL_URL'),
     })
 }
+
+async handleCheckoutsWebhooks(event:any){
+    if(event.type!=="checkout.session.completed"){
+        return;
+    }
+    const session=await this.stripe.checkout.sessions.retrieve(
+        event.data.object.id,
+    );
+    if (session.metadata?.productId) {
+        await this.productService.update(
+            parseInt(session.metadata.productId),
+            { sold: true, }
+        );
+    }
+}   
 }
