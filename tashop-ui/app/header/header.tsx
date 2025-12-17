@@ -17,6 +17,8 @@ import Image from 'next/image';
 import { AuthContext } from '../auth/auth-context';
 import { useContext, useState } from 'react';
 import { routes, unauthorizedRoutes } from '../common/constants/route';
+import NextLink from "next/link";
+import { usePathname, useRouter } from "next/navigation";
  
 
 
@@ -27,6 +29,7 @@ interface HeaderProps{
 export default function Header({logout}:HeaderProps) {
     const isAuthenticated=useContext(AuthContext);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const pathname = usePathname();
   
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -39,7 +42,15 @@ const handleCloseNavMenu = () => {
 
   const pages =isAuthenticated ? routes : unauthorizedRoutes; //auth ise gösterilebilecek sayfalar , değil ise gösterilebilecek sayfalar routes de saklanır 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="sticky"
+      elevation={0}
+      sx={{
+        backdropFilter: "blur(10px)",
+        backgroundColor: "rgba(11,16,32,0.72)",
+        borderBottom: "1px solid rgba(255,255,255,0.08)",
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box
@@ -49,7 +60,9 @@ const handleCloseNavMenu = () => {
               alignItems: 'center',
             }}
           >
-            <Image src="/logom2.png" alt="Logo" width={140} height={40} priority />
+            <Box component={NextLink} href="/" sx={{ display: "inline-flex", alignItems: "center" }}>
+              <Image src="/logom2.png" alt="Logo" width={140} height={40} priority />
+            </Box>
           </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -80,7 +93,13 @@ const handleCloseNavMenu = () => {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page.title} onClick={handleCloseNavMenu}>
+                <MenuItem
+                  key={page.title}
+                  component={NextLink}
+                  href={page.path}
+                  onClick={handleCloseNavMenu}
+                  selected={pathname === page.path}
+                >
                   <Typography sx={{ textAlign: 'center' }}>{page.title}</Typography>
                 </MenuItem>
               ))}
@@ -94,14 +113,25 @@ const handleCloseNavMenu = () => {
               alignItems: 'center',
             }}
           >
-            <Image src="/logom2.png" alt="Logo" width={120} height={32} priority />
+            <Box component={NextLink} href="/" sx={{ display: "inline-flex", alignItems: "center" }}>
+              <Image src="/logom2.png" alt="Logo" width={120} height={32} priority />
+            </Box>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
                 key={page.title}
+                component={NextLink}
+                href={page.path}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                variant={pathname === page.path ? "contained" : "text"}
+                color={pathname === page.path ? "secondary" : "inherit"}
+                sx={{
+                  my: 1,
+                  mx: 0.5,
+                  px: 1.5,
+                  borderRadius: 999,
+                }}
               >
                 {page.title}
               </Button>
@@ -117,6 +147,7 @@ const handleCloseNavMenu = () => {
 }
  
 const Settings=({logout}:HeaderProps)=>{
+    const router = useRouter();
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
       const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -150,9 +181,15 @@ const Settings=({logout}:HeaderProps)=>{
               onClose={handleCloseUserMenu}
             >
             
-                <MenuItem key="Logout" onClick={async () =>{await logout();
+                <MenuItem
+                  key="Logout"
+                  onClick={async () => {
+                    // Server action clears cookie + redirects; router.refresh is a safety net
+                    await logout();
+                    router.refresh();
                     handleCloseUserMenu();
-                }}>
+                  }}
+                >
                   <Typography sx={{ textAlign: 'center' }}>Logout</Typography>
                 </MenuItem>
             

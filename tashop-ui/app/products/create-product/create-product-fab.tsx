@@ -17,11 +17,18 @@ return(
         <>
         <CreateProductModal open={modalVisible} handleClose={()=>setModalVisible(false)} /> 
         
-        <div className="absolute left-10 bottom-10">
-            <Fab color="primary" onClick={()=>setModalVisible(true)}>
-                <AddIcon/>
-            </Fab>
-        </div>
+        <Fab
+          color="primary"
+          onClick={() => setModalVisible(true)}
+          aria-label="Create product"
+          sx={{
+            position: "fixed",
+            right: { xs: 16, sm: 24 },
+            bottom: { xs: 16, sm: 24 },
+          }}
+        >
+          <AddIcon />
+        </Fab>
         </>
 );
 }

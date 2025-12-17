@@ -19,7 +19,9 @@ export default function ThemeRegistry({
     <Providers authenticated={authenticated}>
       <CssBaseline /> 
       <Header logout={logout} />
-      <Container className="mt-10">{children}</Container>
+      <Container sx={{ mt: { xs: 3, md: 5 }, mb: { xs: 5, md: 7 } }}>
+        {children}
+      </Container>
     </Providers>
   );
 }
