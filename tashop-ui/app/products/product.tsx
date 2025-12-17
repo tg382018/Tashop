@@ -3,8 +3,6 @@
 import { Card, CardActionArea, Stack, Typography } from "@mui/material";
 import type { Product } from "./interface/product-interface";
 import { useRouter } from "next/navigation";
-import Checkout from "../checkout/checkout";
- 
 
 
 //product interfacesinde props tanımlıyoruz

@@ -3,9 +3,10 @@
 import Product from "./product";
 import {Product as IProduct} from "./interface/product-interface"
 import { useEffect } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import API_URL from "../common/constants/api";
 import revalidateProducts from "./actions/revalidate-products";
+import authenticated from "../auth/action/authenticated";
 
 interface ProductGridProps{
     products:IProduct[];
@@ -15,10 +16,47 @@ interface ProductGridProps{
 export default function ProductsGrid({products}:ProductGridProps){
 
     useEffect(()=>{
-        const socket=io(API_URL!)
-        socket.on('productUpdated',()=>{revalidateProducts()});
-        return() => {socket.disconnect()};
-    },[])
+        let socket:Socket | undefined
+        let alive = true;
+        const createSocket=async()=>{
+          const token = await authenticated();
+          if (!token) {
+            console.warn("[ws] no auth token -> skipping socket connection");
+            return;
+          }
+
+          const s = io(API_URL!, { auth: { Authentication: token } }); //
+          socket = s;
+
+        s.on("connect", () => {
+          console.info("[ws] connected", { id: s.id });
+        });
+        s.on("disconnect", (reason) => {
+          console.info("[ws] disconnected", { reason });
+        });
+        s.on("connect_error", (err) => {
+          console.error("[ws] connect_error", err?.message ?? err);
+        });
+
+        s.on('productUpdated',()=>{
+          console.info("[ws] productUpdated received -> revalidateProducts()");
+          revalidateProducts()
+        });
+
+        // If we were unmounted while awaiting token, immediately clean up.
+        if (!alive) {
+          s.disconnect();
+        }
+        };
+        createSocket();
+    
+        return() => {
+          alive = false;
+          socket?.disconnect();
+        };
+    }
+    ,[])
+    
      if (!Array.isArray(products)) {
     // If backend returns an error object instead of an array, don't crash the page.
     return <div>Products could not be loaded.</div>;

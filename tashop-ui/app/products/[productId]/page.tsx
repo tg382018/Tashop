@@ -6,14 +6,14 @@ import Checkout from "@/app/checkout/checkout";
 
 interface SingleProductProps{
     params: Promise<{ productId: string }>;
-}
+} // PARAMS KULLANDIK ÇÜNKÜ BU SAYFA URL AÇILINCA AÇILAN PAGE TSX ÖRN PRODUCTS/7 YAZINCA NEXT BURAYI AÇAR SAYFA AÇILIRKEN URLDEKİ 7 BURADAN ALINIR
 
 export default async function SingleProduct({params}:SingleProductProps)
 {
  const getProductImage=(productId:number)=>{
-        return `${API_URL}/images/products/${productId}.png`;
+        return `${API_URL}/images/products/${productId}.png`; //resim URL si üretiyor ZATEN RESİM VARKEN
     }
-    const product=await getProduct(+(await params).productId);
+    const product=await getProduct(+(await params).productId); // + stringi number yapıyor
     return (
         <Stack gap={3} marginBottom={"2rem"}>
                 <Typography variant="h2">

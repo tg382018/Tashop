@@ -3,7 +3,6 @@ import { CreateProductRequest } from './dto/create-product.request';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { promises as fs } from "fs";
 import { join } from "path";
-import { PRODUCT_IMAGES } from './product-image';
 import { Prisma } from '@prisma/client';
 import { ProductsGateway } from './products-gateway';
 @Injectable()
@@ -19,7 +18,7 @@ export class ProductsService {
                     
                 }
             });
-            this.productsGateway.handleProductUpdated();
+            this.productsGateway.handleProductUpdated();// SOCKETİ TETİKLEYİP TEKRAR GET PRODUCTS YAPTIRIYOR
             return product;
     }
 
@@ -52,7 +51,7 @@ async update(productId:number,data:Prisma.ProductUpdateInput){
     where:{id:productId},
     data,
   });
-  this.productsGateway.handleProductUpdated();
+  this.productsGateway.handleProductUpdated(); // SOCKETİ TETİKLEYİP TEKRAR GET PRODUCTS YAPTIRIYOR
 }
 
 async getProduct(productId:number){

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import authenticated from "./app/auth/authenticated";
+import authenticated from "./app/auth/action/authenticated";
 import { unauthorizedRoutes } from "./app/common/constants/route";
 
 export async function proxy(request: NextRequest) {
