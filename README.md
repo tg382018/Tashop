@@ -88,7 +88,6 @@ erDiagram
 
 ### 1) High-level component diagram
 
-```mermaid
 flowchart LR
   U[Browser] --> UI[Next.js UI (tashop-ui)]
   UI -->|HTTP (fetch)| API[NestJS API (tashop-backend)]
@@ -96,7 +95,7 @@ flowchart LR
   API --> DB[(PostgreSQL)]
   API -->|Serve static| IMG[/public/images/products/*.png/]
   API --> STRIPE[Stripe]
-```
+
 
 ### 2) Login flow (Local Guard -> JWT cookie)
 
@@ -206,100 +205,6 @@ Frontend:
 
 ---
 
-## API Endpoints (summary)
 
-> Note: many routes are protected by JWT guard.
-
-- **Auth**
-  - `POST /auth/login` (LocalAuthGuard) → sets cookie
-- **Users**
-  - depends on `tashop-backend/src/users`
-- **Products**
-  - `GET /products?status=availible` (JWT)
-  - `GET /products/:productId` (JWT)
-  - `POST /products` (JWT)
-  - `POST /products/:productId/image` (JWT, multipart/form-data)
-- **Checkout**
-  - `POST /checkout/session` (JWT)
-  - `POST /checkout/webhook` (Stripe)
-
----
-
-## Local Development Setup
-
-### 1) Backend
-
-```bash
-cd tashop-backend
-npm install
-```
-
-Example `.env`:
-
-```bash
-PORT=3003
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/tashop?schema=public"
-JWT_SECRET="super-secret"
-JWT_EXPIRATION="1d"
-
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_SUCCESS_URL="http://localhost:3000/checkout/success"
-STRIPE_CANCEL_URL="http://localhost:3000/"
-```
-
-Migrate + generate Prisma client:
-
-```bash
-npx prisma migrate dev
-npx prisma generate
-```
-
-Run backend:
-
-```bash
-npm run start:dev
-```
-
-### 2) Frontend
-
-```bash
-cd tashop-ui
-npm install
-```
-
-Example `.env`:
-
-```bash
-NEXT_PUBLIC_API_URL="http://localhost:3003"
-```
-
-Run frontend:
-
-```bash
-npm run dev
-```
-
-URLs:
-- UI: `http://localhost:3000`
-- API: `http://localhost:3003`
-
----
-
-## Notes / Possible Improvements
-
-- **Stripe webhook security**: webhook signature verification (raw body) should be added for production.
-- **Cookie secure flag**: correct for production; may need dev-only override on HTTP localhost.
-- **CORS**: backend uses `cors: true` (for production, restrict origins).
-- **Upload file type**: filename is always `.png`. If you upload JPEG/WEBP, it still becomes `.png`; production should handle extension/mime consistently.
-
----
-
-## Scripts
-
-Backend (`tashop-backend/package.json`):
-- `npm run start:dev`, `npm run build`, `npm run test`
-
-Frontend (`tashop-ui/package.json`):
-- `npm run dev`, `npm run build`, `npm run lint`
 
 
